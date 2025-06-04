@@ -766,7 +766,7 @@ const HomeSection = ({ selectedDistrict, setSelectedDistrict, districts }) => (
     <div className="mb-10 text-center">
       <h3 className="text-2xl font-semibold text-sky-800 mb-4">Districts of AP</h3>
       <img
-        src="/ap map.jpg"
+        src="ap-map.jpg"
         alt="Andhra Pradesh Map highlighting Accident, Traffic, and Pollution prone areas"
         className="rounded-lg shadow-md mx-auto w-full max-w-xl border border-gray-300" // Reduced size to max-w-xl
       />

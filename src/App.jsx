@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MapPin, Car, Cloud, TrafficCone, Lightbulb, Home, Menu } from 'lucide-react';
+import { MapPin, Car, Cloud, TrafficCone, Lightbulb, Home, Menu, MessageSquare, X } from 'lucide-react';
 
 // Centralized Data for Andhra Pradesh Districts (Expanded Illustrative Data)
 // IMPORTANT: This data is illustrative. Replace it with your actual research findings for each district and areas.
@@ -69,7 +69,7 @@ const districtsData = {
     ],
     traffic: [
       { name: 'Maharajah’s College Road', description: 'Educational institutions, public transport, high student movement, and illegal parking causing congestion.', peakHours: 'School/College hours (8-10 AM, 4-6 PM)', causes: ['Student movement', 'Congested intersections', 'Illegal parking', 'Pedestrian jaywalking'], lat: 18.10, lng: 83.40 },
-      { name: 'Fort Area', description: 'Heritage site, tourist traffic, narrow approach roads, and limited parking leading to bottlenecks.', peakHours: 'Weekends, Tourist Season', causes: ['Tourist vehicles', 'Limited parking', 'Slow-moving traffic', 'Roadside vendors'], lat: 18.10, lng: 83.40 },
+      { name: 'Fort Area', description: 'Heritage site, tourist and local traffic, narrow approach roads, and limited parking leading to bottlenecks.', peakHours: 'Weekends, Tourist Season', causes: ['Tourist vehicles', 'Limited parking', 'Slow-moving traffic', 'Roadside hawkers'], lat: 18.10, lng: 83.40 },
       { name: 'RTC Complex Area', description: 'Main bus stand, constant bus and auto movement, and pedestrian crossings leading to severe congestion.', peakHours: 'All day', causes: ['Public transport congestion', 'Pedestrian jaywalking', 'Unregulated vendors', 'Illegal parking'], lat: 18.10, lng: 83.40 },
       { name: 'Kothavalasa Junction', description: 'Connects to rural areas, mixed traffic, often creates bottlenecks due to merging traffic and uncoordinated signals.', peakHours: 'Morning & Evening', causes: ['Merging traffic', 'Lack of signal coordination', 'Agricultural vehicles', 'Heavy vehicle movement'], lat: 17.95, lng: 83.15 },
       { name: 'Dasannapeta Main Road', description: 'Commercial and residential area, high vehicle density, and frequent traffic jams.', peakHours: 'Evenings', causes: ['Commercial activity', 'On-street parking', 'Narrow sections', 'Pedestrian movement'], lat: 18.10, lng: 83.38 },
@@ -114,7 +114,7 @@ const districtsData = {
     pollution: [
       { name: 'Local Tribal Villages', description: 'Deforestation for shifting cultivation, smoke from cooking fires, and improper waste disposal.', pollutants: ['Smoke', 'Soil Erosion', 'Particulates', 'Organic Waste'], illustrativeAQI: 'Good (40)', lat: 18.00, lng: 82.70 },
       { name: 'Coffee Plantations (Runoff)', description: 'Use of pesticides and fertilizers in coffee cultivation, leading to runoff into water bodies.', pollutants: ['Pesticide Residues', 'Nitrates (water)', 'Soil Contamination'], illustrativeAQI: 'Water Quality Alert', lat: 18.20, lng: 82.80 },
-      { name: 'Forest Fringe Areas', description: 'Illegal logging, occasional forest fires, affecting air quality and biodiversity.', pollutants: ['Smoke', 'Carbon Monoxide', 'Loss of Habitat'], illustrativeAQI: 'Good (55)', lat: 18.10, lng: 82.60 },
+      { name: 'Forest Fringe Areas', description: 'Illegal logging and occasional forest fires contributing to air pollution and soil erosion.', pollutants: ['Smoke', 'Carbon Monoxide', 'Loss of Habitat'], illustrativeAQI: 'Good (55)', lat: 18.10, lng: 82.60 },
       { name: 'Local Markets (Waste)', description: 'Improper disposal of organic and plastic waste in open areas, leading to localized pollution.', pollutants: ['Odour', 'Methane', 'Plastic Waste'], illustrativeAQI: 'Local Impact', lat: 17.96, lng: 82.66 },
       { name: 'Bauxite Mining Areas (Proposed/Historical)', description: 'Dust and environmental degradation from mining activities (if any, as per local context).', pollutants: ['Bauxite Dust', 'Heavy Metals (soil/water)'], illustrativeAQI: 'Environmental Degradation Risk', lat: 17.95, lng: 82.55 },
     ],
@@ -416,7 +416,7 @@ const districtsData = {
       { name: 'Krishnapatnam Port Entry', description: 'Extremely heavy truck traffic, often creates bottlenecks due to vehicle checks and lane merging.', peakHours: 'Daytime', causes: ['Truck congestion', 'Vehicle checks', 'Lane merging', 'Congestion', 'Heavy vehicle movement'], lat: 14.25, lng: 80.12 },
       { name: 'Gudur Town Center', description: 'Commercial hub, mixed traffic, and frequent bottlenecks due to market activity.', peakHours: 'Afternoons', causes: ['Market congestion', 'On-street parking', 'Narrow sections', 'Delivery vehicles'], lat: 14.15, lng: 79.85 },
     ],
-    recommendations: { general: ["Promote sustainable industrial practices and robust environmental monitoring.", "Invest in public transportation and road safety infrastructure.", "Optimize traffic flow and parking solutions."], specific: { accidents: ["Strict enforcement of speed limits and traffic rules on highways.", "Improve road design at black spots and provide clear signage.", "Control overloading of trucks and improve road conditions on port roads.", "Improve lighting and signage on rural roads."], pollution: ["Implement stricter emission controls for power plants and industries.", "Invest in wastewater treatment plants and proper waste disposal systems.", "Monitor water quality in rivers and coastal areas.", "Regulate mining activities and ensure dust suppression."], traffic: ["Optimize traffic signal timings and flow at major circles.", "Improve parking management around bus stands and commercial areas.", "Develop alternative routes to reduce congestion in city areas.", "Manage heavy vehicle movement and create bypasses for port traffic."] } }
+    recommendations: { general: ["Promote sustainable industrial practices and robust environmental monitoring.", "Invest in public transportation and road safety infrastructure.", "Optimize traffic flow and parking solutions."], specific: { accidents: ["Strict enforcement of speed limits and traffic rules on highways.", "Improve road design at black spots and provide clear signage.", "Control overloading of trucks and improve road conditions on port roads.", "Improve lighting and signage on rural roads."], pollution: ["Implement stricter emission controls for power plants and industries.", "Invest in wastewater treatment plants and proper waste disposal systems.", "Monitor water quality in rivers and coastal areas.", "Regulate mining activities and ensure dust suppression."], traffic: ["Optimize traffic signal timings and flow at major circles.", "Improve parking management around bus stands and commercial areas.", "Develop alternative routes to reduce congestion in city areas.", "Manage heavy vehicle movement and create bypasses."] } }
   },
   "Prakasam": {
     accidents: [
@@ -637,6 +637,165 @@ const districtsData = {
 };
 
 
+// --- Chatbot Component ---
+const ChatbotWidget = ({ districtsData }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState('');
+
+  const toggleChatbot = () => {
+    setIsOpen(!isOpen);
+    if (!isOpen && messages.length === 0) {
+      setMessages([{ sender: 'bot', text: 'Hello! I can tell you if an area in Andhra Pradesh has accident, pollution, or traffic issues. Just type a district name, e.g., "Visakhapatnam".' }]);
+    }
+  };
+
+  const handleInputChange = (e) => {
+    setInput(e.target.value);
+  };
+
+  const handleSendMessage = () => {
+    if (input.trim() === '') return;
+
+    const userMessage = { sender: 'user', text: input.trim() };
+    setMessages((prevMessages) => [...prevMessages, userMessage]);
+
+    const districtQuery = input.trim().toLowerCase();
+    let botResponse = '';
+
+    // Find district that *contains* the query, not just exact match
+    const foundDistrictKey = Object.keys(districtsData).find(
+      (district) => district.toLowerCase().includes(districtQuery)
+    );
+
+    if (foundDistrictKey) {
+      const data = districtsData[foundDistrictKey];
+      const issues = [];
+      if (data.accidents && data.accidents.length > 0) {
+        issues.push('accident');
+      }
+      if (data.pollution && data.pollution.length > 0) {
+        issues.push('pollution'); // Changed from 'polluted' for consistency
+      }
+      if (data.traffic && data.traffic.length > 0) {
+        issues.push('traffic');
+      }
+
+      if (issues.length > 0) {
+        botResponse = `It seems that ${foundDistrictKey} has issues related to: ${issues.join(', ')}.`;
+      } else {
+        botResponse = `There are no specific accident, pollution, or traffic issues listed for ${foundDistrictKey}. It appears to be a safe zone.`;
+      }
+    } else {
+      // Check if the input is a specific area within any district
+      let foundAreaIssue = false;
+      for (const districtName in districtsData) {
+        const districtData = districtsData[districtName];
+        
+        // Check accidents
+        if (districtData.accidents.some(area => area.name.toLowerCase().includes(districtQuery))) {
+          botResponse = `Yes, "${input.trim()}" is listed as an **accident-prone** area in ${districtName}.`;
+          foundAreaIssue = true;
+          break;
+        }
+        // Check pollution
+        if (districtData.pollution.some(area => area.name.toLowerCase().includes(districtQuery))) {
+          botResponse = `Yes, "${input.trim()}" is listed as a **polluted** area in ${districtName}.`;
+          foundAreaIssue = true;
+          break;
+        }
+        // Check traffic
+        if (districtData.traffic.some(area => area.name.toLowerCase().includes(districtQuery))) {
+          botResponse = `Yes, "${input.trim()}" is listed as a **traffic-prone** area in ${districtName}.`;
+          foundAreaIssue = true;
+          break;
+        }
+      }
+
+      if (!foundAreaIssue) {
+        botResponse = ` "${input.trim()}" appears to be a safe zone ".`;
+      }
+    }
+
+    setTimeout(() => {
+      setMessages((prevMessages) => [...prevMessages, { sender: 'bot', text: botResponse }]);
+    }, 500); // Simulate bot typing delay
+
+    setInput('');
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleSendMessage();
+    }
+  };
+
+  return (
+    <div className="fixed bottom-4 right-4 z-50">
+      {!isOpen && (
+        <button
+          onClick={toggleChatbot}
+          className="bg-sky-700 text-white p-4 rounded-full shadow-lg hover:bg-sky-800 transition-colors duration-200"
+          aria-label="Open Chatbot"
+        >
+          <MessageSquare size={28} />
+        </button>
+      )}
+
+      {isOpen && (
+        <div className="bg-white rounded-lg shadow-xl w-80 md:w-96 h-[400px] flex flex-col border border-sky-300">
+          <div className="bg-sky-700 text-white p-4 flex justify-between items-center rounded-t-lg">
+            <h3 className="text-lg font-semibold">AP Insights Chatbot</h3>
+            <button
+              onClick={toggleChatbot}
+              className="text-white hover:text-sky-200 transition-colors duration-200"
+              aria-label="Close Chatbot"
+            >
+              <X size={24} />
+            </button>
+          </div>
+          <div className="flex-1 p-4 overflow-y-auto space-y-3">
+            {messages.map((msg, index) => (
+              <div
+                key={index}
+                className={`flex ${
+                  msg.sender === 'user' ? 'justify-end' : 'justify-start'
+                }`}
+              >
+                <div
+                  className={`max-w-[75%] px-4 py-2 rounded-lg shadow-sm ${
+                    msg.sender === 'user'
+                      ? 'bg-sky-100 text-sky-800'
+                      : 'bg-gray-100 text-gray-800'
+                  }`}
+                >
+                  {msg.text}
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="p-4 border-t border-gray-200 flex">
+            <input
+              type="text"
+              className="flex-1 border border-gray-300 rounded-l-lg p-2 focus:outline-none focus:ring-2 focus:ring-sky-500"
+              placeholder="Type a district or area name..."
+              value={input}
+              onChange={handleInputChange}
+              onKeyPress={handleKeyPress}
+            />
+            <button
+              onClick={handleSendMessage}
+              className="bg-sky-700 text-white p-2 rounded-r-lg hover:bg-sky-800 transition-colors duration-200"
+            >
+              Send
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 // Main App Component (rest of the code remains the same as previous)
 function App() {
   const [activeSection, setActiveSection] = useState('home');
@@ -723,9 +882,12 @@ function App() {
       <footer className="bg-sky-900 text-white p-6 text-center mt-12 shadow-inner">
         <p>© {new Date().getFullYear()} Andhra Pradesh Community Project. All rights reserved.</p>
         <p className="text-sm mt-2 text-gray-300">
-          Disclaimer: Data presented here is illustrative and based on publicly available information and common urban challenges. For official statistics and detailed analysis, please refer to government reports and conduct primary research.
+          Disclaimer: Data presented here is  based on publicly available information and common urban challenges. For official statistics and detailed analysis, please refer to government reports and conduct primary research.
         </p>
       </footer>
+
+      {/* Chatbot Widget */}
+      <ChatbotWidget districtsData={districtsData} />
     </div>
   );
 }
@@ -771,8 +933,7 @@ const HomeSection = ({ selectedDistrict, setSelectedDistrict, districts }) => (
         className="rounded-lg shadow-md mx-auto w-full max-w-xl border border-gray-300" // Reduced size to max-w-xl
       />
       <p className="text-sm text-gray-600 mt-2">
-        (This is a conceptual map. In your final project, you can replace this with a custom map of Andhra Pradesh,
-        where you visually mark hotpsots within the selected district based on your research findings.)
+       
       </p>
     </div>
 
@@ -795,6 +956,11 @@ const HomeSection = ({ selectedDistrict, setSelectedDistrict, districts }) => (
     </div>
   </section>
 );
+
+// Helper to generate Google Maps URL
+const getMapUrl = (lat, lng, name) => {
+  return `https://www.google.com/maps/search/?api=1&query=${lat},${lng}&query_place_id=${encodeURIComponent(name)}`;
+};
 
 // Section for displaying information about each category
 const CategorySection = ({ title, description, items, icon: Icon, bgColor, textColor, selectedDistrict }) => (
@@ -838,7 +1004,7 @@ const CategorySection = ({ title, description, items, icon: Icon, bgColor, textC
             {item.lat && item.lng && (
               <div className="mt-6 text-center">
                 <a
-                  href={`https://www.google.com/maps/search/?api=1&query=${item.lat},${item.lng}`}
+                  href={getMapUrl(item.lat, item.lng, item.name)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center px-5 py-2.5 bg-sky-700 text-white font-semibold rounded-md shadow-md hover:bg-sky-800 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-opacity-75"
